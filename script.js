@@ -8,58 +8,33 @@ let level = 1;
 let redrawRequired = false;
 let allBullets = [];
 let defaultBulletSpeed = 20;
-
-class Bullet{
-  constructor(){
-    this.x = player.col*gameView.cellSize + 25;
-    this.y = player.row*gameView.cellSize + 25;
-    this.width = 50;
-    this.height = 50;
-    this.speed = 25;
-  }
-}
+let bulletDirections = ["up", "down", "left", "right"];
 
 class Player {
-
   constructor() {
     this.col = 0;
     this.row = 0;
   }
 
-  shootUp(playerRow, playerCol,n){
-      ctx.fillStyle = gameView.bulletColor;
-      ctx.beginPath();
-      ctx.arc((1 * gameView.cellSize)+25, (1 * gameView.cellSize)+25, 5, 0, 2 * Math.PI, true);
-      ctx.closePath();
-      ctx.fill();
-      console.log("i tried to draw");
-      //maze.redraw();
+  shootUp() {
+    var bullet = new Bullet(0);
+    allBullets.push(bullet);
   }
-  shootDown(playerXCoord, playerYCoord){
-    
+  shootDown() {
+    var bullet = new Bullet(1);
+    allBullets.push(bullet);
   }
-  shootLeft(playerXCoord, playerYCoord){
-    
+  shootLeft() {
+    var bullet = new Bullet(2);
+    allBullets.push(bullet);
   }
-  shootRight(playerXCoord, playerYCoord){
-
-  }
-  shootSW(playerXCoord, playerYCoord){
-
-  }
-  shootSE(playerXCoord, playerYCoord){
-
-  }
-  shootNE(playerXCoord, playerYCoord){
-
-  }
-  shootNW(playerXCoord, playerYCoord){
-
+  shootRight() {
+    var bullet = new Bullet(3);
+    allBullets.push(bullet);
   }
 }
 
 class MazeCell {
-
   constructor(col, row) {
     this.col = col;
     this.row = row;
@@ -71,13 +46,10 @@ class MazeCell {
 
     this.visited = false;
   }
-
 }
 
 class GameView {
-
   constructor(cols, rows, cellSize) {
-
     this.backgroundColor = "#fff";
     this.cols = cols;
     this.endColor = "#88FF88";
@@ -91,7 +63,6 @@ class GameView {
   }
 
   generate() {
-
     mazeHeight = this.rows * this.cellSize;
     mazeWidth = this.cols * this.cellSize;
 
@@ -128,7 +99,10 @@ class GameView {
           dir = Math.floor(Math.random() * 4);
           switch (dir) {
             case 0:
-              if (currCell.col !== (this.cols - 1) && !this.cells[currCell.col + 1][currCell.row].visited) {
+              if (
+                currCell.col !== this.cols - 1 &&
+                !this.cells[currCell.col + 1][currCell.row].visited
+              ) {
                 currCell.eastWall = false;
                 nextCell = this.cells[currCell.col + 1][currCell.row];
                 nextCell.westWall = false;
@@ -136,7 +110,10 @@ class GameView {
               }
               break;
             case 1:
-              if (currCell.row !== 0 && !this.cells[currCell.col][currCell.row - 1].visited) {
+              if (
+                currCell.row !== 0 &&
+                !this.cells[currCell.col][currCell.row - 1].visited
+              ) {
                 currCell.northWall = false;
                 nextCell = this.cells[currCell.col][currCell.row - 1];
                 nextCell.southWall = false;
@@ -144,7 +121,10 @@ class GameView {
               }
               break;
             case 2:
-              if (currCell.row !== (this.rows - 1) && !this.cells[currCell.col][currCell.row + 1].visited) {
+              if (
+                currCell.row !== this.rows - 1 &&
+                !this.cells[currCell.col][currCell.row + 1].visited
+              ) {
                 currCell.southWall = false;
                 nextCell = this.cells[currCell.col][currCell.row + 1];
                 nextCell.northWall = false;
@@ -152,7 +132,10 @@ class GameView {
               }
               break;
             case 3:
-              if (currCell.col !== 0 && !this.cells[currCell.col - 1][currCell.row].visited) {
+              if (
+                currCell.col !== 0 &&
+                !this.cells[currCell.col - 1][currCell.row].visited
+              ) {
                 currCell.westWall = false;
                 nextCell = this.cells[currCell.col - 1][currCell.row];
                 nextCell.eastWall = false;
@@ -163,14 +146,13 @@ class GameView {
           if (foundNeighbor) {
             stack.push(nextCell);
           }
-        } while (!foundNeighbor)
+        } while (!foundNeighbor);
       } else {
         currCell = stack.pop();
       }
     }
 
     this.redraw();
-
   }
 
   hasUnvisited() {
@@ -185,26 +167,53 @@ class GameView {
   }
 
   hasUnvisitedNeighbor(mazeCell) {
-    return ((mazeCell.col !== 0               && !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||
-            (mazeCell.col !== (this.cols - 1) && !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||
-            (mazeCell.row !== 0               && !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||
-            (mazeCell.row !== (this.rows - 1) && !this.cells[mazeCell.col][mazeCell.row + 1].visited));
+    return (
+      (mazeCell.col !== 0 &&
+        !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||
+      (mazeCell.col !== this.cols - 1 &&
+        !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||
+      (mazeCell.row !== 0 &&
+        !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||
+      (mazeCell.row !== this.rows - 1 &&
+        !this.cells[mazeCell.col][mazeCell.row + 1].visited)
+    );
   }
 
-  refresh(){
-    if(redrawRequired){
+  refresh() {
+    this.refreshBullets();
+    if (redrawRequired) {
       this.redraw();
       redrawRequired = false;
     }
   }
 
-  redraw() {
+  refreshBullets() {
+    var i = 0;
+    var currentBullet;
+    // Start by eliminating bullets out of the screen...
+    while (i < allBullets.length) {
+      currentBullet = allBullets[i];
+      if (currentBullet.hasHit) {
+        allBullets.splice(i, 1); // Remove the bullet outside of the screen.
+      } else {
+        currentBullet.move();
+        i += 1; // Next bullet...
+      }
+      redrawRequired = true;
+    }
+  }
 
+  redraw() {
     ctx.fillStyle = this.backgroundColor;
     ctx.fillRect(0, 0, mazeHeight, mazeWidth);
 
     ctx.fillStyle = this.endColor;
-    ctx.fillRect((this.cols - 1) * this.cellSize, (this.rows - 1) * this.cellSize, this.cellSize, this.cellSize);
+    ctx.fillRect(
+      (this.cols - 1) * this.cellSize,
+      (this.rows - 1) * this.cellSize,
+      this.cellSize,
+      this.cellSize
+    );
 
     ctx.strokeStyle = this.mazeColor;
     ctx.strokeRect(0, 0, mazeHeight, mazeWidth);
@@ -238,24 +247,110 @@ class GameView {
       }
     }
     this.drawPlayer();
-    //this.drawBullet();
+    this.drawBullets();
   }
-
 
   drawPlayer() {
-        ctx.fillStyle = this.playerColor;
-        ctx.beginPath();
-        ctx.arc((player.col * this.cellSize) + 25, (player.row * this.cellSize) + 25, 10, 0, 2 * Math.PI, true);
-        ctx.closePath();
-        ctx.fill();
+    ctx.fillStyle = this.playerColor;
+    ctx.beginPath();
+    ctx.arc(
+      player.col * this.cellSize + 25,
+      player.row * this.cellSize + 25,
+      10,
+      0,
+      2 * Math.PI,
+      true
+    );
+    ctx.closePath();
+    ctx.fill();
   }
 
-  drawBullet(){
-    ctx.fillStyle = this.bulletColor;
-      ctx.beginPath();
-      ctx.arc((1 * this.cellSize)+25, (1 * this.cellSize)+25, 5, 0, 2 * Math.PI, true);
-      ctx.closePath();
-      ctx.fill();
+  drawBullets() {
+    for (var i = 0; i < allBullets.length; i++) {
+      allBullets[i].draw();
+    }
+  }
+}
+
+class Bullet {
+  constructor(bulletDirectionIndex) {
+    this.bulletDirection = bulletDirections[bulletDirectionIndex];
+    this.x = player.col;
+    this.y = player.row;
+    this.width = 50;
+    this.height = 50;
+    this.speed = 25;
+    this.hasHit = false;
+  }
+
+  draw() {
+    ctx.fillStyle = gameView.bulletColor;
+    ctx.beginPath();
+    ctx.arc(
+      this.x * gameView.cellSize + 25,
+      this.y * gameView.cellSize + 25,
+      5,
+      0,
+      2 * Math.PI,
+      true
+    );
+    ctx.closePath();
+    ctx.fill();
+    console.log("i tried to draw");
+  }
+
+  move() {
+    if (this.bulletDirection === "up") {
+      this.moveUp();
+      return;
+    }
+    if (this.bulletDirection === "down") {
+      this.moveDown();
+      return;
+    }
+    if (this.bulletDirection === "right") {
+      this.moveRight();
+      return;
+    }
+    if (this.bulletDirection === "left") {
+      this.moveLeft();
+      return;
+    }
+  }
+
+  moveLeft() {
+    if (!gameView.cells[this.x][this.y].westWall) {
+      this.x -= 1;
+    } else {
+      this.hasHit = true;
+    }
+  }
+
+  moveRight() {
+    if (!gameView.cells[this.x][this.y].eastWall) {
+      this.x += 1;
+    } else {
+      this.hasHit = true;
+    }
+  }
+
+  moveUp() {
+    console.log(this.x);
+    console.log(this.y);
+    console.log(gameView.cells[this.x][this.y]);
+    if (!gameView.cells[this.x][this.y].northWall) {
+      this.y -= 1;
+    } else {
+      this.hasHit = true;
+    }
+  }
+
+  moveDown() {
+    if (!gameView.cells[this.x][this.y].southWall) {
+      this.y += 1;
+    } else {
+      this.hasHit = true;
+    }
   }
 }
 
@@ -290,33 +385,29 @@ function onKeyDown(event) {
       }
       break;
     case 97:
-      console.log("shooting diagonally to south left")
+      console.log("shooting diagonally to south left");
       break;
     case 98:
-      break;
-    case 99:
+      player.shootDown();
       break;
     case 100:
+      player.shootLeft();
       break;
     case 102:
-      break;
-    case 103:
+      player.shootRight();
       break;
     case 104:
-      player.shootUp(player.row, player.col, -1);
-      break;
-    case 105:
+      player.shootUp();
       break;
     default:
       break;
   }
-  if(player.row===8&&player.col===8){
-      player = new Player();
-      level++;
-      gameView.generate();
-      console.log(level);
+  if (player.row === 8 && player.col === 8) {
+    player = new Player();
+    level++;
+    gameView.generate();
+    console.log(level);
   }
-
 }
 
 function onLoad() {
@@ -329,6 +420,5 @@ function onLoad() {
   gameView.generate();
 
   document.addEventListener("keydown", onKeyDown);
-  setInterval( () => gameView.refresh(), 100);
-
+  setInterval(() => gameView.refresh(), 100);
 }
