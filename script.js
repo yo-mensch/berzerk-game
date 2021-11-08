@@ -1,4 +1,5 @@
 let ctx;
+let interval = null;
 let canvas;
 let gameView;
 let mazeHeight;
@@ -7,8 +8,8 @@ let player;
 let level = 1;
 let redrawRequired = false;
 let allBullets = [];
-let defaultBulletSpeed = 20;
-let bulletDirections = ["up", "down", "left", "right"];
+let enemies = [];
+let directions = ["up", "down", "left", "right"];
 
 class Player {
   constructor() {
@@ -55,6 +56,7 @@ class GameView {
     this.endColor = "#88FF88";
     this.mazeColor = "#000";
     this.playerColor = "#880088";
+    this.enemyColor = "#FFA500";
     this.bulletColor = "#f55";
     this.rows = rows;
     this.cellSize = cellSize;
@@ -181,6 +183,7 @@ class GameView {
 
   refresh() {
     this.refreshBullets();
+    this.refreshEnemies();
     if (redrawRequired) {
       this.redraw();
       redrawRequired = false;
@@ -190,17 +193,34 @@ class GameView {
   refreshBullets() {
     var i = 0;
     var currentBullet;
-    // Start by eliminating bullets out of the screen...
     while (i < allBullets.length) {
       currentBullet = allBullets[i];
       if (currentBullet.hasHit) {
-        allBullets.splice(i, 1); // Remove the bullet outside of the screen.
+        allBullets.splice(i, 1);
       } else {
         currentBullet.move();
-        i += 1; // Next bullet...
+        i += 1;
       }
       redrawRequired = true;
     }
+  }
+
+  refreshEnemies(){
+    var i = 0;
+    var currentEnemy;
+    while(i < enemies.length) {
+      currentEnemy = enemies[i];
+      for(var j = 0; j < allBullets.length; j++) {
+        if(allBullets[j].x === currentEnemy.col && allBullets[j].y === currentEnemy.row){
+          enemies.splice(i, 1);
+          allBullets.splice(j, 1);
+          break;
+        }
+      }
+      currentEnemy.move();
+      i += 1;
+    }
+    redrawRequired = true;
   }
 
   redraw() {
@@ -248,6 +268,7 @@ class GameView {
     }
     this.drawPlayer();
     this.drawBullets();
+    this.drawEnemies();
   }
 
   drawPlayer() {
@@ -270,16 +291,19 @@ class GameView {
       allBullets[i].draw();
     }
   }
+
+  drawEnemies(){
+    for (var i = 0; i < enemies.length; i++){
+      enemies[i].draw();
+    }
+  }
 }
 
 class Bullet {
   constructor(bulletDirectionIndex) {
-    this.bulletDirection = bulletDirections[bulletDirectionIndex];
+    this.bulletDirection = directions[bulletDirectionIndex];
     this.x = player.col;
     this.y = player.row;
-    this.width = 50;
-    this.height = 50;
-    this.speed = 25;
     this.hasHit = false;
   }
 
@@ -296,7 +320,6 @@ class Bullet {
     );
     ctx.closePath();
     ctx.fill();
-    console.log("i tried to draw");
   }
 
   move() {
@@ -335,9 +358,6 @@ class Bullet {
   }
 
   moveUp() {
-    console.log(this.x);
-    console.log(this.y);
-    console.log(gameView.cells[this.x][this.y]);
     if (!gameView.cells[this.x][this.y].northWall) {
       this.y -= 1;
     } else {
@@ -350,6 +370,54 @@ class Bullet {
       this.y += 1;
     } else {
       this.hasHit = true;
+    }
+  }
+}
+
+class Enemy {
+  constructor(){
+    this.row = Math.floor(Math.random() * 9);
+    this.col = Math.floor(Math.random() * 9);
+  }
+
+  draw(){
+    ctx.fillStyle = gameView.enemyColor;
+    ctx.beginPath();
+    ctx.arc(
+      this.col * gameView.cellSize + 25,
+      this.row * gameView.cellSize + 25,
+      10,
+      0,
+      2 * Math.PI,
+      true
+    );
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  move(){
+    var direction = directions[Math.floor(Math.random()*4)];
+    switch(direction){
+      case "up":
+        if (!gameView.cells[this.col][this.row].northWall) {
+          this.row -= 1;
+        }
+        break;
+      case "down":
+        if (!gameView.cells[this.col][this.row].southWall) {
+          this.row += 1;
+        }
+        break;
+      case "left":
+        if (!gameView.cells[this.col][this.row].westWall) {
+          this.col -= 1;
+        } 
+        break;
+      case "right":
+        if (!gameView.cells[this.col][this.row].eastWall) {
+          this.col += 1;
+        }
+        break;
     }
   }
 }
@@ -384,9 +452,6 @@ function onKeyDown(event) {
         redrawRequired = true;
       }
       break;
-    case 97:
-      console.log("shooting diagonally to south left");
-      break;
     case 98:
       player.shootDown();
       break;
@@ -403,22 +468,44 @@ function onKeyDown(event) {
       break;
   }
   if (player.row === 8 && player.col === 8) {
-    player = new Player();
-    level++;
-    gameView.generate();
-    console.log(level);
+    var messageField = document.getElementById('message');
+    if(level < 3){
+      if(enemies.length === 0){
+        player = new Player();
+        level++;
+        for(var i = 0; i < level; i++){
+          var enemy = new Enemy();
+          enemies.push(enemy);
+        }
+        messageField.innerHTML = "Level "+level;
+        gameView.generate();
+      } else {
+        messageField.innerHTML = "Shoot all the enemies before entering next level!";
+      }
+    } else {
+      messageField.innerHTML = "Finished! Refresh to start again";
+      endGame();
+    }
   }
 }
 
+function endGame(){
+  clearInterval(interval);
+  canvas.remove();
+}
+
 function onLoad() {
-  console.log(level);
+  var messageField = document.getElementById('message');
+  messageField.innerHTML = "Level "+level;
   canvas = document.getElementById("mainForm");
   ctx = canvas.getContext("2d");
 
   player = new Player();
   gameView = new GameView(9, 9, 50);
+  enemies.push(new Enemy());
+  console.log(enemies);
   gameView.generate();
 
   document.addEventListener("keydown", onKeyDown);
-  setInterval(() => gameView.refresh(), 100);
+  interval = setInterval(() => gameView.refresh(), 100);
 }
