@@ -210,6 +210,11 @@ class GameView {
     var currentEnemy;
     while(i < enemies.length) {
       currentEnemy = enemies[i];
+      if(currentEnemy.row === player.row && currentEnemy.col === player.col){
+        var messageField = document.getElementById('message');
+        messageField.innerHTML = "You got killed by an enemy! Refresh to start the game";
+        endGame();
+      }
       for(var j = 0; j < allBullets.length; j++) {
         if(allBullets[j].x === currentEnemy.col && allBullets[j].y === currentEnemy.row){
           enemies.splice(i, 1);
