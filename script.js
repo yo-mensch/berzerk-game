@@ -381,8 +381,8 @@ class Bullet {
 
 class Enemy {
   constructor(){
-    this.row = Math.floor(Math.random() * 9);
-    this.col = Math.floor(Math.random() * 9);
+    this.row = Math.floor(Math.random() * 8) + 1;
+    this.col = Math.floor(Math.random() * 8) + 1;
   }
 
   draw(){
@@ -488,8 +488,12 @@ function onKeyDown(event) {
         messageField.innerHTML = "Shoot all the enemies before entering next level!";
       }
     } else {
+      if(enemies.length === 0){ 
       messageField.innerHTML = "Finished! Refresh to start again";
       endGame();
+      } else {
+        messageField.innerHTML = "Shoot all the enemies before finishing the game!";
+      }
     }
   }
 }
