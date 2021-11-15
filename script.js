@@ -1,4 +1,4 @@
-let ctx;
+let graphicsContext;
 let interval = null;
 let canvas;
 let gameView;
@@ -229,45 +229,45 @@ class GameView {
   }
 
   redraw() {
-    ctx.fillStyle = this.backgroundColor;
-    ctx.fillRect(0, 0, mazeHeight, mazeWidth);
+    graphicsContext.fillStyle = this.backgroundColor;
+    graphicsContext.fillRect(0, 0, mazeHeight, mazeWidth);
 
-    ctx.fillStyle = this.endColor;
-    ctx.fillRect(
+    graphicsContext.fillStyle = this.endColor;
+    graphicsContext.fillRect(
       (this.cols - 1) * this.cellSize,
       (this.rows - 1) * this.cellSize,
       this.cellSize,
       this.cellSize
     );
 
-    ctx.strokeStyle = this.mazeColor;
-    ctx.strokeRect(0, 0, mazeHeight, mazeWidth);
+    graphicsContext.strokeStyle = this.mazeColor;
+    graphicsContext.strokeRect(0, 0, mazeHeight, mazeWidth);
 
     for (let col = 0; col < this.cols; col++) {
       for (let row = 0; row < this.rows; row++) {
         if (this.cells[col][row].eastWall) {
-          ctx.beginPath();
-          ctx.moveTo((col + 1) * this.cellSize, row * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
-          ctx.stroke();
+          graphicsContext.beginPath();
+          graphicsContext.moveTo((col + 1) * this.cellSize, row * this.cellSize);
+          graphicsContext.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
+          graphicsContext.stroke();
         }
         if (this.cells[col][row].northWall) {
-          ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, row * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, row * this.cellSize);
-          ctx.stroke();
+          graphicsContext.beginPath();
+          graphicsContext.moveTo(col * this.cellSize, row * this.cellSize);
+          graphicsContext.lineTo((col + 1) * this.cellSize, row * this.cellSize);
+          graphicsContext.stroke();
         }
         if (this.cells[col][row].southWall) {
-          ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, (row + 1) * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
-          ctx.stroke();
+          graphicsContext.beginPath();
+          graphicsContext.moveTo(col * this.cellSize, (row + 1) * this.cellSize);
+          graphicsContext.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
+          graphicsContext.stroke();
         }
         if (this.cells[col][row].westWall) {
-          ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, row * this.cellSize);
-          ctx.lineTo(col * this.cellSize, (row + 1) * this.cellSize);
-          ctx.stroke();
+          graphicsContext.beginPath();
+          graphicsContext.moveTo(col * this.cellSize, row * this.cellSize);
+          graphicsContext.lineTo(col * this.cellSize, (row + 1) * this.cellSize);
+          graphicsContext.stroke();
         }
       }
     }
@@ -277,9 +277,9 @@ class GameView {
   }
 
   drawPlayer() {
-    ctx.fillStyle = this.playerColor;
-    ctx.beginPath();
-    ctx.arc(
+    graphicsContext.fillStyle = this.playerColor;
+    graphicsContext.beginPath();
+    graphicsContext.arc(
       player.col * this.cellSize + 25,
       player.row * this.cellSize + 25,
       10,
@@ -287,8 +287,8 @@ class GameView {
       2 * Math.PI,
       true
     );
-    ctx.closePath();
-    ctx.fill();
+    graphicsContext.closePath();
+    graphicsContext.fill();
   }
 
   drawBullets() {
@@ -313,9 +313,9 @@ class Bullet {
   }
 
   draw() {
-    ctx.fillStyle = gameView.bulletColor;
-    ctx.beginPath();
-    ctx.arc(
+    graphicsContext.fillStyle = gameView.bulletColor;
+    graphicsContext.beginPath();
+    graphicsContext.arc(
       this.x * gameView.cellSize + 25,
       this.y * gameView.cellSize + 25,
       5,
@@ -323,8 +323,8 @@ class Bullet {
       2 * Math.PI,
       true
     );
-    ctx.closePath();
-    ctx.fill();
+    graphicsContext.closePath();
+    graphicsContext.fill();
   }
 
   move() {
@@ -386,9 +386,9 @@ class Enemy {
   }
 
   draw(){
-    ctx.fillStyle = gameView.enemyColor;
-    ctx.beginPath();
-    ctx.arc(
+    graphicsContext.fillStyle = gameView.enemyColor;
+    graphicsContext.beginPath();
+    graphicsContext.arc(
       this.col * gameView.cellSize + 25,
       this.row * gameView.cellSize + 25,
       10,
@@ -396,8 +396,8 @@ class Enemy {
       2 * Math.PI,
       true
     );
-    ctx.closePath();
-    ctx.fill();
+    graphicsContext.closePath();
+    graphicsContext.fill();
   }
 
   move(){
@@ -507,12 +507,11 @@ function onLoad() {
   var messageField = document.getElementById('message');
   messageField.innerHTML = "Level "+level;
   canvas = document.getElementById("mainForm");
-  ctx = canvas.getContext("2d");
+  graphicsContext = canvas.getContext("2d");
 
   player = new Player();
   gameView = new GameView(9, 9, 50);
   enemies.push(new Enemy());
-  console.log(enemies);
   gameView.generate();
 
   document.addEventListener("keydown", onKeyDown);
