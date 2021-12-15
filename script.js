@@ -1,3 +1,5 @@
+import MazeCell from './src/MazeCell.js';
+
 let ctx;
 let interval = null;
 let canvas;
@@ -35,19 +37,7 @@ class Player {
   }
 }
 
-class MazeCell {
-  constructor(col, row) {
-    this.col = col;
-    this.row = row;
 
-    this.eastWall = true;
-    this.northWall = true;
-    this.southWall = true;
-    this.westWall = true;
-
-    this.visited = false;
-  }
-}
 
 class GameView {
   constructor(cols, rows, cellSize) {
@@ -293,14 +283,44 @@ class GameView {
 
   drawBullets() {
     for (var i = 0; i < allBullets.length; i++) {
-      allBullets[i].draw();
+      this.drawBullet(allBullets[i]);
     }
   }
 
   drawEnemies(){
     for (var i = 0; i < enemies.length; i++){
-      enemies[i].draw();
+      this.drawEnemy(enemies[i]);
     }
+  }
+
+  drawBullet(bullet){
+    ctx.fillStyle = gameView.bulletColor;
+    ctx.beginPath();
+    ctx.arc(
+      bullet.x * gameView.cellSize + 25,
+      bullet.y * gameView.cellSize + 25,
+      5,
+      0,
+      2 * Math.PI,
+      true
+    );
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  drawEnemy(enemy){
+    ctx.fillStyle = gameView.enemyColor;
+    ctx.beginPath();
+    ctx.arc(
+      enemy.col * gameView.cellSize + 25,
+      enemy.row * gameView.cellSize + 25,
+      10,
+      0,
+      2 * Math.PI,
+      true
+    );
+    ctx.closePath();
+    ctx.fill();
   }
 }
 
@@ -310,21 +330,6 @@ class Bullet {
     this.x = player.col;
     this.y = player.row;
     this.hasHit = false;
-  }
-
-  draw() {
-    ctx.fillStyle = gameView.bulletColor;
-    ctx.beginPath();
-    ctx.arc(
-      this.x * gameView.cellSize + 25,
-      this.y * gameView.cellSize + 25,
-      5,
-      0,
-      2 * Math.PI,
-      true
-    );
-    ctx.closePath();
-    ctx.fill();
   }
 
   move() {
@@ -383,21 +388,6 @@ class Enemy {
   constructor(){
     this.row = Math.floor(Math.random() * 9);
     this.col = Math.floor(Math.random() * 9);
-  }
-
-  draw(){
-    ctx.fillStyle = gameView.enemyColor;
-    ctx.beginPath();
-    ctx.arc(
-      this.col * gameView.cellSize + 25,
-      this.row * gameView.cellSize + 25,
-      10,
-      0,
-      2 * Math.PI,
-      true
-    );
-    ctx.closePath();
-    ctx.fill();
   }
 
   move(){
@@ -499,7 +489,7 @@ function endGame(){
   canvas.remove();
 }
 
-function onLoad() {
+window.onLoad = function onLoad() {
   var messageField = document.getElementById('message');
   messageField.innerHTML = "Level "+level;
   canvas = document.getElementById("mainForm");

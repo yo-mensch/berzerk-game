@@ -3,10 +3,12 @@
     <head>
       <link rel="stylesheet" href="style.css">
       <meta charset="UTF-8">
-      <script src="script.js"></script>
+      <script src="./script.js" type="module">
+        $.support_cors = false;
+      </script>
       <title>Berzerk</title>
     </head>
-    <body onload="onLoad();">
+    <body onload="onLoad()">
       <div id="">
         <h1 id="message"></h1>
       </div>
