@@ -1,4 +1,6 @@
-import MazeCell from './src/MazeCell.js';
+import Maze from './src/Maze.js';
+import getDirections from './src/constants/Directions.js';
+import { getBackgroundColor, getBulletColor, getEnemyColor, getFinishColor, getPlayerColor, getWallColor } from './src/constants/Colors.js';
 
 let ctx;
 let interval = null;
@@ -11,7 +13,6 @@ let level = 1;
 let redrawRequired = false;
 let allBullets = [];
 let enemies = [];
-let directions = ["up", "down", "left", "right"];
 
 class Player {
   constructor() {
@@ -37,138 +38,23 @@ class Player {
   }
 }
 
-
-
 class GameView {
-  constructor(cols, rows, cellSize) {
-    this.backgroundColor = "#fff";
+  constructor(cols, rows) {
+    this.maze = new Maze(9,9);
     this.cols = cols;
-    this.endColor = "#88FF88";
-    this.mazeColor = "#000";
-    this.playerColor = "#880088";
-    this.enemyColor = "#FFA500";
-    this.bulletColor = "#f55";
     this.rows = rows;
-    this.cellSize = cellSize;
 
     this.cells = [];
   }
 
   generate() {
-    mazeHeight = this.rows * this.cellSize;
-    mazeWidth = this.cols * this.cellSize;
-
-    canvas.height = mazeHeight;
-    canvas.width = mazeWidth;
+    canvas.height = this.maze.height;
+    canvas.width = this.maze.width;
     canvas.style.height = mazeHeight;
     canvas.style.width = mazeWidth;
 
-    for (let col = 0; col < this.cols; col++) {
-      this.cells[col] = [];
-      for (let row = 0; row < this.rows; row++) {
-        this.cells[col][row] = new MazeCell(col, row);
-      }
-    }
-
-    let rndCol = Math.floor(Math.random() * this.cols);
-    let rndRow = Math.floor(Math.random() * this.rows);
-
-    let stack = [];
-    stack.push(this.cells[rndCol][rndRow]);
-
-    let currCell;
-    let dir;
-    let foundNeighbor;
-    let nextCell;
-
-    while (this.hasUnvisited(this.cells)) {
-      currCell = stack[stack.length - 1];
-      currCell.visited = true;
-      if (this.hasUnvisitedNeighbor(currCell)) {
-        nextCell = null;
-        foundNeighbor = false;
-        do {
-          dir = Math.floor(Math.random() * 4);
-          switch (dir) {
-            case 0:
-              if (
-                currCell.col !== this.cols - 1 &&
-                !this.cells[currCell.col + 1][currCell.row].visited
-              ) {
-                currCell.eastWall = false;
-                nextCell = this.cells[currCell.col + 1][currCell.row];
-                nextCell.westWall = false;
-                foundNeighbor = true;
-              }
-              break;
-            case 1:
-              if (
-                currCell.row !== 0 &&
-                !this.cells[currCell.col][currCell.row - 1].visited
-              ) {
-                currCell.northWall = false;
-                nextCell = this.cells[currCell.col][currCell.row - 1];
-                nextCell.southWall = false;
-                foundNeighbor = true;
-              }
-              break;
-            case 2:
-              if (
-                currCell.row !== this.rows - 1 &&
-                !this.cells[currCell.col][currCell.row + 1].visited
-              ) {
-                currCell.southWall = false;
-                nextCell = this.cells[currCell.col][currCell.row + 1];
-                nextCell.northWall = false;
-                foundNeighbor = true;
-              }
-              break;
-            case 3:
-              if (
-                currCell.col !== 0 &&
-                !this.cells[currCell.col - 1][currCell.row].visited
-              ) {
-                currCell.westWall = false;
-                nextCell = this.cells[currCell.col - 1][currCell.row];
-                nextCell.eastWall = false;
-                foundNeighbor = true;
-              }
-              break;
-          }
-          if (foundNeighbor) {
-            stack.push(nextCell);
-          }
-        } while (!foundNeighbor);
-      } else {
-        currCell = stack.pop();
-      }
-    }
-
+    this.maze.generate();
     this.redraw();
-  }
-
-  hasUnvisited() {
-    for (let col = 0; col < this.cols; col++) {
-      for (let row = 0; row < this.rows; row++) {
-        if (!this.cells[col][row].visited) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  hasUnvisitedNeighbor(mazeCell) {
-    return (
-      (mazeCell.col !== 0 &&
-        !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||
-      (mazeCell.col !== this.cols - 1 &&
-        !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||
-      (mazeCell.row !== 0 &&
-        !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||
-      (mazeCell.row !== this.rows - 1 &&
-        !this.cells[mazeCell.col][mazeCell.row + 1].visited)
-    );
   }
 
   refresh() {
@@ -219,44 +105,44 @@ class GameView {
   }
 
   redraw() {
-    ctx.fillStyle = this.backgroundColor;
-    ctx.fillRect(0, 0, mazeHeight, mazeWidth);
+    ctx.fillStyle = getBackgroundColor();
+    ctx.fillRect(0, 0, this.maze.height, this.maze.width);
 
-    ctx.fillStyle = this.endColor;
+    ctx.fillStyle = getFinishColor();
     ctx.fillRect(
-      (this.cols - 1) * this.cellSize,
-      (this.rows - 1) * this.cellSize,
-      this.cellSize,
-      this.cellSize
+      (this.cols - 1) * this.maze.cellSize,
+      (this.rows - 1) * this.maze.cellSize,
+      this.maze.cellSize,
+      this.maze.cellSize
     );
 
     ctx.strokeStyle = this.mazeColor;
-    ctx.strokeRect(0, 0, mazeHeight, mazeWidth);
+    ctx.strokeRect(0, 0, this.maze.height, this.maze.width);
 
     for (let col = 0; col < this.cols; col++) {
       for (let row = 0; row < this.rows; row++) {
-        if (this.cells[col][row].eastWall) {
+        if (this.maze.cells[col][row].eastWall) {
           ctx.beginPath();
-          ctx.moveTo((col + 1) * this.cellSize, row * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
+          ctx.moveTo((col + 1) * this.maze.cellSize, row * this.maze.cellSize);
+          ctx.lineTo((col + 1) * this.maze.cellSize, (row + 1) * this.maze.cellSize);
           ctx.stroke();
         }
-        if (this.cells[col][row].northWall) {
+        if (this.maze.cells[col][row].northWall) {
           ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, row * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, row * this.cellSize);
+          ctx.moveTo(col * this.maze.cellSize, row * this.maze.cellSize);
+          ctx.lineTo((col + 1) * this.cellSize, row * this.maze.cellSize);
           ctx.stroke();
         }
-        if (this.cells[col][row].southWall) {
+        if (this.maze.cells[col][row].southWall) {
           ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, (row + 1) * this.cellSize);
-          ctx.lineTo((col + 1) * this.cellSize, (row + 1) * this.cellSize);
+          ctx.moveTo(col * this.maze.cellSize, (row + 1) * this.maze.cellSize);
+          ctx.lineTo((col + 1) * this.maze.cellSize, (row + 1) * this.maze.cellSize);
           ctx.stroke();
         }
-        if (this.cells[col][row].westWall) {
+        if (this.maze.cells[col][row].westWall) {
           ctx.beginPath();
-          ctx.moveTo(col * this.cellSize, row * this.cellSize);
-          ctx.lineTo(col * this.cellSize, (row + 1) * this.cellSize);
+          ctx.moveTo(col * this.maze.cellSize, row * this.maze.cellSize);
+          ctx.lineTo(col * this.maze.cellSize, (row + 1) * this.maze.cellSize);
           ctx.stroke();
         }
       }
@@ -267,11 +153,11 @@ class GameView {
   }
 
   drawPlayer() {
-    ctx.fillStyle = this.playerColor;
+    ctx.fillStyle = getPlayerColor();
     ctx.beginPath();
     ctx.arc(
-      player.col * this.cellSize + 25,
-      player.row * this.cellSize + 25,
+      player.col * this.maze.cellSize + 25,
+      player.row * this.maze.cellSize + 25,
       10,
       0,
       2 * Math.PI,
@@ -294,11 +180,11 @@ class GameView {
   }
 
   drawBullet(bullet){
-    ctx.fillStyle = gameView.bulletColor;
+    ctx.fillStyle = getBulletColor();
     ctx.beginPath();
     ctx.arc(
-      bullet.x * gameView.cellSize + 25,
-      bullet.y * gameView.cellSize + 25,
+      bullet.x * gameView.maze.cellSize + 25,
+      bullet.y * gameView.maze.cellSize + 25,
       5,
       0,
       2 * Math.PI,
@@ -309,11 +195,11 @@ class GameView {
   }
 
   drawEnemy(enemy){
-    ctx.fillStyle = gameView.enemyColor;
+    ctx.fillStyle = getEnemyColor();
     ctx.beginPath();
     ctx.arc(
-      enemy.col * gameView.cellSize + 25,
-      enemy.row * gameView.cellSize + 25,
+      enemy.col * gameView.maze.cellSize + 25,
+      enemy.row * gameView.maze.cellSize + 25,
       10,
       0,
       2 * Math.PI,
@@ -326,7 +212,7 @@ class GameView {
 
 class Bullet {
   constructor(bulletDirectionIndex) {
-    this.bulletDirection = directions[bulletDirectionIndex];
+    this.bulletDirection = getDirections()[bulletDirectionIndex];
     this.x = player.col;
     this.y = player.row;
     this.hasHit = false;
@@ -352,7 +238,7 @@ class Bullet {
   }
 
   moveLeft() {
-    if (!gameView.cells[this.x][this.y].westWall) {
+    if (!gameView.maze.cells[this.x][this.y].westWall) {
       this.x -= 1;
     } else {
       this.hasHit = true;
@@ -360,7 +246,7 @@ class Bullet {
   }
 
   moveRight() {
-    if (!gameView.cells[this.x][this.y].eastWall) {
+    if (!gameView.maze.cells[this.x][this.y].eastWall) {
       this.x += 1;
     } else {
       this.hasHit = true;
@@ -368,7 +254,7 @@ class Bullet {
   }
 
   moveUp() {
-    if (!gameView.cells[this.x][this.y].northWall) {
+    if (!gameView.maze.cells[this.x][this.y].northWall) {
       this.y -= 1;
     } else {
       this.hasHit = true;
@@ -376,7 +262,7 @@ class Bullet {
   }
 
   moveDown() {
-    if (!gameView.cells[this.x][this.y].southWall) {
+    if (!gameView.maze.cells[this.x][this.y].southWall) {
       this.y += 1;
     } else {
       this.hasHit = true;
@@ -391,25 +277,25 @@ class Enemy {
   }
 
   move(){
-    var direction = directions[Math.floor(Math.random()*4)];
+    var direction = getDirections()[Math.floor(Math.random()*4)];
     switch(direction){
       case "up":
-        if (!gameView.cells[this.col][this.row].northWall) {
+        if (!gameView.maze.cells[this.col][this.row].northWall) {
           this.row -= 1;
         }
         break;
       case "down":
-        if (!gameView.cells[this.col][this.row].southWall) {
+        if (!gameView.maze.cells[this.col][this.row].southWall) {
           this.row += 1;
         }
         break;
       case "left":
-        if (!gameView.cells[this.col][this.row].westWall) {
+        if (!gameView.maze.cells[this.col][this.row].westWall) {
           this.col -= 1;
         } 
         break;
       case "right":
-        if (!gameView.cells[this.col][this.row].eastWall) {
+        if (!gameView.maze.cells[this.col][this.row].eastWall) {
           this.col += 1;
         }
         break;
@@ -421,28 +307,28 @@ function onKeyDown(event) {
   switch (event.keyCode) {
     case 37:
     case 65:
-      if (!gameView.cells[player.col][player.row].westWall) {
+      if (!gameView.maze.cells[player.col][player.row].westWall) {
         player.col -= 1;
         redrawRequired = true;
       }
       break;
     case 39:
     case 68:
-      if (!gameView.cells[player.col][player.row].eastWall) {
+      if (!gameView.maze.cells[player.col][player.row].eastWall) {
         player.col += 1;
         redrawRequired = true;
       }
       break;
     case 40:
     case 83:
-      if (!gameView.cells[player.col][player.row].southWall) {
+      if (!gameView.maze.cells[player.col][player.row].southWall) {
         player.row += 1;
         redrawRequired = true;
       }
       break;
     case 38:
     case 87:
-      if (!gameView.cells[player.col][player.row].northWall) {
+      if (!gameView.maze.cells[player.col][player.row].northWall) {
         player.row -= 1;
         redrawRequired = true;
       }
@@ -496,9 +382,8 @@ window.onLoad = function onLoad() {
   ctx = canvas.getContext("2d");
 
   player = new Player();
-  gameView = new GameView(9, 9, 50);
+  gameView = new GameView(9, 9);
   enemies.push(new Enemy());
-  console.log(enemies);
   gameView.generate();
 
   document.addEventListener("keydown", onKeyDown);
