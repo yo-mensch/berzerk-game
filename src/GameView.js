@@ -1,5 +1,5 @@
 import Maze from './Maze.js';
-import { getBackgroundColor, getBulletColor, getEnemyColor, getFinishColor, getPlayerColor, getWallColor } from './constants/Colors.js';
+import { getBackgroundColor, getBulletColor, getEnemyColor, getFinishColor, getPlayerColor } from './constants/Colors.js';
 
 export default class GameView {
     constructor(cols, rows, canvas) {

@@ -1,0 +1,547 @@
+[
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/script.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/Bullet.js",
+    "messages": [
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 4 to the 1 allowed.",
+        "line": 11,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 11,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'move' has a complexity of 5. Maximum allowed is 1.",
+        "line": 11,
+        "column": 9,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 28,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/no-redundant-jump",
+        "severity": 2,
+        "message": "Remove this redundant jump.",
+        "line": 26,
+        "column": 9,
+        "nodeType": "ReturnStatement",
+        "messageId": "removeRedundantJump",
+        "endLine": 26,
+        "endColumn": 16,
+        "suggestions": [
+          {
+            "messageId": "suggestJumpRemoval",
+            "fix": { "range": [694, 710], "text": "" },
+            "desc": "Remove this redundant jump"
+          }
+        ]
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 1 allowed.",
+        "line": 30,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 30,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'moveLeft' has a complexity of 2. Maximum allowed is 1.",
+        "line": 30,
+        "column": 13,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 36,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 1 allowed.",
+        "line": 38,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 38,
+        "endColumn": 14
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'moveRight' has a complexity of 2. Maximum allowed is 1.",
+        "line": 38,
+        "column": 14,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 44,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 1 allowed.",
+        "line": 46,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 46,
+        "endColumn": 11
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'moveUp' has a complexity of 2. Maximum allowed is 1.",
+        "line": 46,
+        "column": 11,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 52,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 1 allowed.",
+        "line": 54,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 54,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'moveDown' has a complexity of 2. Maximum allowed is 1.",
+        "line": 54,
+        "column": 13,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 60,
+        "endColumn": 6
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 10,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import getDirections from './constants/Directions.js';\nexport default class Bullet {\n    constructor(player,bulletDirectionIndex, gameView) {\n      this.bulletDirection = getDirections()[bulletDirectionIndex];\n      this.x = player.col;\n      this.y = player.row;\n      this.hasHit = false;\n      this.gameView = gameView;\n    }\n  \n    move() {\n      if (this.bulletDirection === \"up\") {\n        this.moveUp();\n        return;\n      }\n      if (this.bulletDirection === \"down\") {\n        this.moveDown();\n        return;\n      }\n      if (this.bulletDirection === \"right\") {\n        this.moveRight();\n        return;\n      }\n      if (this.bulletDirection === \"left\") {\n        this.moveLeft();\n        return;\n      }\n    }\n  \n    moveLeft() {\n      if (!this.gameView.maze.cells[this.x][this.y].westWall) {\n        this.x -= 1;\n      } else {\n        this.hasHit = true;\n      }\n    }\n  \n    moveRight() {\n      if (!this.gameView.maze.cells[this.x][this.y].eastWall) {\n        this.x += 1;\n      } else {\n        this.hasHit = true;\n      }\n    }\n  \n    moveUp() {\n      if (!this.gameView.maze.cells[this.x][this.y].northWall) {\n        this.y -= 1;\n      } else {\n        this.hasHit = true;\n      }\n    }\n  \n    moveDown() {\n      if (!this.gameView.maze.cells[this.x][this.y].southWall) {\n        this.y += 1;\n      } else {\n        this.hasHit = true;\n      }\n    }\n  }",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/Enemy.js",
+    "messages": [
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 9 to the 1 allowed.",
+        "line": 10,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 10,
+        "endColumn": 9
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'move' has a complexity of 9. Maximum allowed is 1.",
+        "line": 10,
+        "column": 9,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 34,
+        "endColumn": 6
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 2,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import getDirections from \"./constants/Directions.js\";\n\nexport default class Enemy {\n    constructor(gameView){\n      this.row = Math.floor(Math.random() * 9);\n      this.col = Math.floor(Math.random() * 9);\n      this.gameView = gameView;\n    }\n  \n    move(){\n      var direction = getDirections()[Math.floor(Math.random()*4)];\n      switch(direction){\n        case \"up\":\n          if (!this.gameView.maze.cells[this.col][this.row].northWall) {\n            this.row -= 1;\n          }\n          break;\n        case \"down\":\n          if (!this.gameView.maze.cells[this.col][this.row].southWall) {\n            this.row += 1;\n          }\n          break;\n        case \"left\":\n          if (!this.gameView.maze.cells[this.col][this.row].westWall) {\n            this.col -= 1;\n          } \n          break;\n        case \"right\":\n          if (!this.gameView.maze.cells[this.col][this.row].eastWall) {\n            this.col += 1;\n          }\n          break;\n      }\n    }\n  }\n  ",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/Game.js",
+    "messages": [
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'refresh' has a complexity of 2. Maximum allowed is 1.",
+        "line": 14,
+        "column": 12,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 25,
+        "endColumn": 8
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 4 to the 1 allowed.",
+        "line": 26,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 26,
+        "endColumn": 19
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'refreshBullets' has a complexity of 3. Maximum allowed is 1.",
+        "line": 26,
+        "column": 19,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 39,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 10 to the 1 allowed.",
+        "line": 40,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 40,
+        "endColumn": 19
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'refreshEnemies' has a complexity of 7. Maximum allowed is 1.",
+        "line": 40,
+        "column": 19,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 60,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 2 to the 1 allowed.",
+        "line": 62,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 62,
+        "endColumn": 24
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'checkPlayerPosition' has a complexity of 3. Maximum allowed is 1.",
+        "line": 62,
+        "column": 24,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 66,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 5 to the 1 allowed.",
+        "line": 68,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 68,
+        "endColumn": 16
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'checkFinish' has a complexity of 3. Maximum allowed is 1.",
+        "line": 68,
+        "column": 16,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 79,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'levelUp' has a complexity of 2. Maximum allowed is 1.",
+        "line": 81,
+        "column": 12,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 90,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 9 to the 1 allowed.",
+        "line": 92,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 92,
+        "endColumn": 14
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'onKeyDown' has a complexity of 17. Maximum allowed is 1.",
+        "line": 92,
+        "column": 14,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 133,
+        "endColumn": 6
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 12,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import GameView from \"./GameView.js\";\nimport Player from './Player.js';\nimport Enemy from \"./Enemy.js\";\nexport default class Game{\n    constructor(){\n        this.canvas = document.getElementById(\"mainForm\");\n        this.enemies = [];\n        this. interval = null;\n        this.redrawRequired = false;\n        this.gameView = new GameView(9, 9, this.canvas);\n        this.player = null;\n        this.level = 1;\n    }\n    refresh() {\n        this.refreshBullets();\n        this.refreshEnemies();\n        if (this.redrawRequired) {\n          this.gameView.redraw();\n          this.gameView.drawPlayer(this.player);\n          this.gameView.drawEnemies(this.enemies);\n          this.gameView.drawBullets(this.player.bullets);\n          this.redrawRequired = false;\n        }\n        this.checkPlayerPosition();\n      }\n    refreshBullets() {\n        var i = 0;\n        var currentBullet;\n        while (i < this.player.bullets.length) {\n          currentBullet = this.player.bullets[i];\n          if (currentBullet.hasHit) {\n            this.player.bullets.splice(i, 1);\n          } else {\n            currentBullet.move();\n            i += 1;\n          }\n          this.redrawRequired = true;\n        }\n    }\n    refreshEnemies(){\n        var i = 0;\n        var currentEnemy;\n        while(i < this.enemies.length) {\n          currentEnemy = this.enemies[i];\n          if(currentEnemy.row === this.player.row && currentEnemy.col === this.player.col){\n            this.gameView.setMessage(\"You got killed by an enemy! Refresh to start the game\");-\n            this.endGame();\n          }\n          for(var j = 0; j < this.player.bullets.length; j++) {\n            if(this.player.bullets[j].x === currentEnemy.col && this.player.bullets[j].y === currentEnemy.row){\n              this.enemies.splice(i, 1);\n              this.player.bullets.splice(j, 1);\n              break;\n            }\n          }\n          currentEnemy.move();\n          i += 1;\n        }\n        this.redrawRequired = true;\n    }\n\n    checkPlayerPosition(){\n      if(this.player.row === 8 && this.player.col === 8){\n        this.checkFinish();\n      }\n    }\n\n    checkFinish(){\n      if(this.level < 3){\n        if(this.enemies.length === 0){\n          this.levelUp();\n        } else {\n          this.gameView.setMessage(\"Shoot all the enemies before entering next level!\");\n        }\n      } else {\n        this.gameView.setMessage(\"Finished! Refresh to start again\");\n        this.endGame();\n      }\n    }\n\n    levelUp(){\n      this.player = new Player(this.gameView);\n      this.level++;\n      for(var i = 0; i < this.level; i++){\n        this.enemies.push(new Enemy(this.gameView));\n      }\n      document.addEventListener('keydown',this.onKeyDown.bind(event,this.player));\n      this.gameView.setMessage(\"Level \"+this.level);\n      this.gameView.generate();\n    }\n\n    onKeyDown(player,event){\n      switch (event.keyCode) {\n        case 37:\n        case 65:\n          if (!player.gameView.maze.cells[player.col][player.row].westWall) {\n            player.col -= 1;\n          }\n          break;\n        case 39:\n        case 68:\n          if (!player.gameView.maze.cells[player.col][player.row].eastWall) {\n            player.col += 1;\n          }\n          break;\n        case 40:\n        case 83:\n          if (!player.gameView.maze.cells[player.col][player.row].southWall) {\n            player.row += 1;\n          }\n          break;\n        case 38:\n        case 87:\n          if (!player.gameView.maze.cells[player.col][player.row].northWall) {\n            player.row -= 1;\n          }\n          break;\n        case 98:\n          player.shootDown();\n          break;\n        case 100:\n          player.shootLeft();\n          break;\n        case 102:\n          player.shootRight();\n          break;\n        case 104:\n          player.shootUp();\n          break;\n        default:\n          break;\n      }\n    }\n\n    startGame(){\n      this.player = new Player(this.gameView);\n      this.enemies.push(new Enemy(this.gameView));\n      this.gameView.setMessage(\"Level \"+this.level);\n      this.gameView.generate();\n      \n      document.addEventListener('keydown',this.onKeyDown.bind(event,this.player));\n      this.interval = setInterval(()=>this.refresh(),100);\n    }\n      \n    endGame(){\n        clearInterval(this.interval);\n        this.canvas.remove();\n    }\n}",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/GameView.js",
+    "messages": [
+      {
+        "ruleId": "no-unused-vars",
+        "severity": 2,
+        "message": "'getWallColor' is defined but never used.",
+        "line": 2,
+        "column": 93,
+        "nodeType": "Identifier",
+        "messageId": "unusedVar",
+        "endLine": 2,
+        "endColumn": 105
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 15 to the 1 allowed.",
+        "line": 24,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 24,
+        "endColumn": 11
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'redraw' has a complexity of 7. Maximum allowed is 1.",
+        "line": 24,
+        "column": 11,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 67,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'drawBullets' has a complexity of 2. Maximum allowed is 1.",
+        "line": 84,
+        "column": 16,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 88,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'drawEnemies' has a complexity of 2. Maximum allowed is 1.",
+        "line": 90,
+        "column": 16,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 94,
+        "endColumn": 6
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 4,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import Maze from './Maze.js';\nimport { getBackgroundColor, getBulletColor, getEnemyColor, getFinishColor, getPlayerColor, getWallColor } from './constants/Colors.js';\n\nexport default class GameView {\n    constructor(cols, rows, canvas) {\n      this.canvas = canvas;\n      this.graphicsContext = canvas.getContext(\"2d\");\n      this.maze = new Maze(rows,cols);\n      this.cols = cols;\n      this.rows = rows;\n      this.messageField = document.getElementById('message');\n    }\n  \n    generate() {\n      this.canvas.height = this.maze.height;\n      this.canvas.width = this.maze.width;\n      this.canvas.style.height = this.maze.height;\n      this.canvas.style.width = this.maze.width;\n  \n      this.maze.generate();\n      this.redraw();\n    }\n  \n    redraw() {\n      this.graphicsContext.fillStyle = getBackgroundColor();\n      this.graphicsContext.fillRect(0, 0, this.maze.height, this.maze.width);\n  \n      this.graphicsContext.fillStyle = getFinishColor();\n      this.graphicsContext.fillRect(\n        (this.cols - 1) * this.maze.cellSize,\n        (this.rows - 1) * this.maze.cellSize,\n        this.maze.cellSize,\n        this.maze.cellSize\n      );\n  \n      this.graphicsContext.strokeStyle = this.mazeColor;\n      this.graphicsContext.strokeRect(0, 0, this.maze.height, this.maze.width);\n  \n      for (let col = 0; col < this.cols; col++) {\n        for (let row = 0; row < this.rows; row++) {\n          if (this.maze.cells[col][row].eastWall) {\n            this.graphicsContext.beginPath();\n            this.graphicsContext.moveTo((col + 1) * this.maze.cellSize, row * this.maze.cellSize);\n            this.graphicsContext.lineTo((col + 1) * this.maze.cellSize, (row + 1) * this.maze.cellSize);\n            this.graphicsContext.stroke();\n          }\n          if (this.maze.cells[col][row].northWall) {\n            this.graphicsContext.beginPath();\n            this.graphicsContext.moveTo(col * this.maze.cellSize, row * this.maze.cellSize);\n            this.graphicsContext.lineTo((col + 1) * this.cellSize, row * this.maze.cellSize);\n            this.graphicsContext.stroke();\n          }\n          if (this.maze.cells[col][row].southWall) {\n            this.graphicsContext.beginPath();\n            this.graphicsContext.moveTo(col * this.maze.cellSize, (row + 1) * this.maze.cellSize);\n            this.graphicsContext.lineTo((col + 1) * this.maze.cellSize, (row + 1) * this.maze.cellSize);\n            this.graphicsContext.stroke();\n          }\n          if (this.maze.cells[col][row].westWall) {\n            this.graphicsContext.beginPath();\n            this.graphicsContext.moveTo(col * this.maze.cellSize, row * this.maze.cellSize);\n            this.graphicsContext.lineTo(col * this.maze.cellSize, (row + 1) * this.maze.cellSize);\n            this.graphicsContext.stroke();\n          }\n        }\n      }\n    }\n  \n    drawPlayer(player) {\n      this.graphicsContext.fillStyle = getPlayerColor();\n      this.graphicsContext.beginPath();\n      this.graphicsContext.arc(\n        player.col * this.maze.cellSize + 25,\n        player.row * this.maze.cellSize + 25,\n        10,\n        0,\n        2 * Math.PI,\n        true\n      );\n      this.graphicsContext.closePath();\n      this.graphicsContext.fill();\n    }\n  \n    drawBullets(allBullets) {\n      for (var i = 0; i < allBullets.length; i++) {\n        this.drawBullet(allBullets[i]);\n      }\n    }\n  \n    drawEnemies(enemies){\n      for (var i = 0; i < enemies.length; i++){\n        this.drawEnemy(enemies[i]);\n      }\n    }\n  \n    drawBullet(bullet){\n      this.graphicsContext.fillStyle = getBulletColor();\n      this.graphicsContext.beginPath();\n      this.graphicsContext.arc(\n        bullet.x * this.maze.cellSize + 25,\n        bullet.y * this.maze.cellSize + 25,\n        5,\n        0,\n        2 * Math.PI,\n        true\n      );\n      this.graphicsContext.closePath();\n      this.graphicsContext.fill();\n    }\n  \n    drawEnemy(enemy){\n      this.graphicsContext.fillStyle = getEnemyColor();\n      this.graphicsContext.beginPath();\n      this.graphicsContext.arc(\n        enemy.col * this.maze.cellSize + 25,\n        enemy.row * this.maze.cellSize + 25,\n        10,\n        0,\n        2 * Math.PI,\n        true\n      );\n      this.graphicsContext.closePath();\n      this.graphicsContext.fill();\n    }\n  \n    setMessage(message){\n      this.messageField.innerHTML = message;\n    }\n\n    getMessage(){\n        return this.messageField.innerHTML;\n    }\n  }",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/Maze.js",
+    "messages": [
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 39 to the 1 allowed.",
+        "line": 13,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 13,
+        "endColumn": 13
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'generate' has a complexity of 17. Maximum allowed is 1.",
+        "line": 13,
+        "column": 13,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 88,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 3 to the 1 allowed.",
+        "line": 90,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 90,
+        "endColumn": 17
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'setMazeCells' has a complexity of 3. Maximum allowed is 1.",
+        "line": 90,
+        "column": 17,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 97,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 6 to the 1 allowed.",
+        "line": 99,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 99,
+        "endColumn": 17
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'hasUnvisited' has a complexity of 4. Maximum allowed is 1.",
+        "line": 99,
+        "column": 17,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 108,
+        "endColumn": 6
+      },
+      {
+        "ruleId": "sonarjs/cognitive-complexity",
+        "severity": 1,
+        "message": "Refactor this function to reduce its Cognitive Complexity from 7 to the 1 allowed.",
+        "line": 110,
+        "column": 5,
+        "nodeType": null,
+        "messageId": "refactorFunction",
+        "endLine": 110,
+        "endColumn": 25
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "message": "Method 'hasUnvisitedNeighbor' has a complexity of 8. Maximum allowed is 1.",
+        "line": 110,
+        "column": 25,
+        "nodeType": "FunctionExpression",
+        "messageId": "complex",
+        "endLine": 121,
+        "endColumn": 6
+      }
+    ],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 8,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import MazeCell from './MazeCell.js';\n\nexport default class Maze {\n    constructor(rows, cols){\n        this.cellSize = 50;\n        this.rows = rows;\n        this.cols = cols;\n        this.width = rows * this.cellSize;\n        this.height = cols * this.cellSize;\n        this.cells=[];\n    }\n\n    generate(){\n        this.setMazeCells();\n\n        let rndCol = Math.floor(Math.random() * this.cols);\n        let rndRow = Math.floor(Math.random() * this.rows);\n\n        let stack = [];\n        stack.push(this.cells[rndCol][rndRow]);\n        let currCell;\n        let dir;\n        let foundNeighbor;\n        let nextCell;\n        \n        while (this.hasUnvisited(this.cells)) {\n            currCell = stack[stack.length - 1];\n            currCell.visited = true;\n            if (this.hasUnvisitedNeighbor(currCell)) {\n              nextCell = null;\n              foundNeighbor = false;\n              do {\n                dir = Math.floor(Math.random() * 4);\n                switch (dir) {\n                  case 0:\n                    if (\n                      currCell.col !== this.cols - 1 &&\n                      !this.cells[currCell.col + 1][currCell.row].visited\n                    ) {\n                      currCell.eastWall = false;\n                      nextCell = this.cells[currCell.col + 1][currCell.row];\n                      nextCell.westWall = false;\n                      foundNeighbor = true;\n                    }\n                    break;\n                  case 1:\n                    if (\n                      currCell.row !== 0 &&\n                      !this.cells[currCell.col][currCell.row - 1].visited\n                    ) {\n                      currCell.northWall = false;\n                      nextCell = this.cells[currCell.col][currCell.row - 1];\n                      nextCell.southWall = false;\n                      foundNeighbor = true;\n                    }\n                    break;\n                  case 2:\n                    if (\n                      currCell.row !== this.rows - 1 &&\n                      !this.cells[currCell.col][currCell.row + 1].visited\n                    ) {\n                      currCell.southWall = false;\n                      nextCell = this.cells[currCell.col][currCell.row + 1];\n                      nextCell.northWall = false;\n                      foundNeighbor = true;\n                    }\n                    break;\n                  case 3:\n                    if (\n                      currCell.col !== 0 &&\n                      !this.cells[currCell.col - 1][currCell.row].visited\n                    ) {\n                      currCell.westWall = false;\n                      nextCell = this.cells[currCell.col - 1][currCell.row];\n                      nextCell.eastWall = false;\n                      foundNeighbor = true;\n                    }\n                    break;\n                }\n                if (foundNeighbor) {\n                  stack.push(nextCell);\n                }\n              } while (!foundNeighbor);\n            } else {\n              currCell = stack.pop();\n            }\n        }\n    }\n\n    setMazeCells() {\n        for (let col = 0; col < this.cols; col++) {\n            this.cells[col] = [];\n            for (let row = 0; row < this.rows; row++) {\n                this.cells[col][row] = new MazeCell(col, row);\n            }\n        }\n    }\n\n    hasUnvisited() {\n        for (let col = 0; col < this.cols; col++) {\n          for (let row = 0; row < this.rows; row++) {\n            if (!this.cells[col][row].visited) {\n              return true;\n            }\n          }\n        }\n        return false;\n    }\n\n    hasUnvisitedNeighbor(mazeCell) {\n        return (\n          (mazeCell.col !== 0 &&\n            !this.cells[mazeCell.col - 1][mazeCell.row].visited) ||\n          (mazeCell.col !== this.cols - 1 &&\n            !this.cells[mazeCell.col + 1][mazeCell.row].visited) ||\n          (mazeCell.row !== 0 &&\n            !this.cells[mazeCell.col][mazeCell.row - 1].visited) ||\n          (mazeCell.row !== this.rows - 1 &&\n            !this.cells[mazeCell.col][mazeCell.row + 1].visited)\n        );\n    }\n}",
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/MazeCell.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/Player.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/constants/Colors.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  },
+  {
+    "filePath": "/Users/rasajurgutyte/Desktop/berzerk-game/src/constants/Directions.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  }
+]
