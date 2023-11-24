@@ -8,5 +8,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.50.0",
+    "eslint-plugin-complexity": "^1.0.2"
+  },
+  "dependencies": {
+    "cloc": "^1.98.0-cloc",
+    "eslint-plugin-sonarjs": "^0.21.0"
+  }
 }
